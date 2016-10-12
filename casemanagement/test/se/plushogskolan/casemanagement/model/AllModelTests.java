@@ -1,21 +1,18 @@
-package se.plushogskolan.casemanagement;
+package se.plushogskolan.casemanagement.model;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import se.plushogskolan.casemanagement.model.AllModelTests;
 import se.plushogskolan.casemanagement.model.TestIssue;
 import se.plushogskolan.casemanagement.model.TestTeam;
 import se.plushogskolan.casemanagement.model.TestUser;
 import se.plushogskolan.casemanagement.model.TestWorkItem;
-import se.plushogskolan.casemanagement.repository.sql.AllSqlRepositoryTests;
 import se.plushogskolan.casemanagement.repository.sql.TestSqlIssueRepository;
 import se.plushogskolan.casemanagement.repository.sql.TestSqlTeamRepository;
-import se.plushogskolan.casemanagement.service.TestCaseService;
 
 @RunWith(Suite.class)
 
-@Suite.SuiteClasses({ AllSqlRepositoryTests.class, AllModelTests.class, TestCaseService.class })
+@Suite.SuiteClasses({ TestIssue.class, TestTeam.class, TestUser.class, TestWorkItem.class, })
 
-public class AllTests {
+public class AllModelTests {
 }

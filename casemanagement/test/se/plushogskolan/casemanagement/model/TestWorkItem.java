@@ -1,7 +1,8 @@
 package se.plushogskolan.casemanagement.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
+
+import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Test;
 
@@ -43,27 +44,27 @@ public class TestWorkItem {
 
     @Test
     public void differentIfDifferentId() {
-        assertNotEquals(workItem, workItemDifferentId);
+        assertThat(workItem, not(workItemDifferentId));
     }
 
     @Test
     public void differentIfDifferentUserId() {
-        assertNotEquals(workItem, workItemDifferentUserId);
+        assertThat(workItem, not(workItemDifferentUserId));
     }
 
     @Test
     public void differentIfDifferentDescription() {
-        assertNotEquals(workItem, workItemDifferentDescription);
+        assertThat(workItem, not(workItemDifferentDescription));
     }
 
     @Test
     public void differentIfDifferentStatus() {
-        assertNotEquals(workItem, workItemDifferentStatus);
+        assertThat(workItem, not(workItemDifferentStatus));
     }
 
     @Test
     public void differentIfDifferentType() {
-        assertNotEquals(workItem, "workItem");
+        assertThat(workItem, not("workItem"));
     }
 
     @Test

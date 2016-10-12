@@ -34,7 +34,7 @@ public final class CaseService {
             if (userFillsRequirements(user)) {
                 userRepository.saveUser(user);
             } else {
-                throw new ServiceException("Username too short or team is full" + user.toString());
+                throw new ServiceException("Username too short or team is full. User: " + user.toString());
             }
         } catch (RepositoryException e) {
             throw new ServiceException("Could not save User: " + user.toString(), e);

@@ -134,28 +134,13 @@ public class TestCaseService {
     @Test
     public void usernameMustBeTenCharactersLong() throws RepositoryException {
         String usernameWithNineChars = "Is<10char";
-
-        expectedException.expect(ServiceException.class);
-        expectedException.expectMessage("Username must be at least 10 characters long. Username was "
-                + usernameWithNineChars);
-
         User userWithToShortName = User.builder().setFirstName(user.getFirstName()).setLastName(user.getLastName()).setId(user.getId())
                 .build(usernameWithNineChars);
 
-        caseService.saveUser(userWithToShortName);
-    }
-
-    @Test
-    public void negativeUserIdShouldThrowException() throws RepositoryException {
-        int negativeUserId = -1;
-        User userWithNegativeId = User.builder().setFirstName(user.getFirstName()).setLastName(user.getLastName()).setId(negativeUserId)
-                .build(user.getUsername());
-
         expectedException.expect(ServiceException.class);
-        expectedException.expectMessage("User id must be positive. User id was "
-                + negativeUserId);
+        expectedException.expectMessage("Username too short or team is full. User: " + userWithToShortName.toString());
 
-        caseService.saveUser(userWithNegativeId);
+        caseService.saveUser(userWithToShortName);
     }
 
     @Test

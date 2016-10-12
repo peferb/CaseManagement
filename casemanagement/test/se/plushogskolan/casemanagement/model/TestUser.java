@@ -1,7 +1,9 @@
 package se.plushogskolan.casemanagement.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+
+import static org.junit.Assert.*;
+
+import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +33,9 @@ public final class TestUser {
 
         assertEquals(twinUser1, twinUser2);
 
-        assertNotEquals(twinUser1, brokenUser);
+        assertThat(twinUser1, not(brokenUser));
 
-        assertNotEquals(twinUser1, Team.builder().build("Not a User"));
+        assertThat(twinUser1, not(Team.builder().build("Not a User")));
     }
 
     @Test
@@ -43,6 +45,6 @@ public final class TestUser {
 
         assertEquals(twinUser1.hashCode(), twinUser2.hashCode());
 
-        assertNotEquals(twinUser1.hashCode(), brokenUser.hashCode());
+        assertThat(twinUser1.hashCode(), not(brokenUser.hashCode()));
     }
 }
