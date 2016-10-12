@@ -1,7 +1,7 @@
 package se.plushogskolan.casemanagement.model;
+import static org.junit.Assert.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +29,10 @@ public final class TestTeam {
         assertEquals(teamTwin1, teamTwin2);
 
         anotherTeam = Team.builder().build(defaultName);
-        assertNotEquals(teamTwin1, anotherTeam);
+        assertThat(teamTwin1, not(anotherTeam));
 
         anotherTeam = Team.builder().build(anotherName);
-        assertNotEquals(teamTwin1, anotherTeam);
+        assertThat(teamTwin1, not(anotherTeam));
     }
 
     @Test
@@ -40,10 +40,10 @@ public final class TestTeam {
         assertEquals(teamTwin1.hashCode(), teamTwin2.hashCode());
 
         anotherTeam = Team.builder().build(defaultName);
-        assertNotEquals(teamTwin1.hashCode(), anotherTeam.hashCode());
+        assertThat(teamTwin1.hashCode(), not(anotherTeam.hashCode()));
 
         anotherTeam = Team.builder().build(anotherName);
-        assertNotEquals(teamTwin1.hashCode(), anotherTeam.hashCode());
+        assertThat(teamTwin1.hashCode(), not(anotherTeam.hashCode()));
     }
 
     @Test
