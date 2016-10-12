@@ -1,7 +1,9 @@
 package se.plushogskolan.casemanagement.repository.sql;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
+
+import static org.hamcrest.CoreMatchers.*;
 
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class TestSqlIssueRepository {
         Issue issueAfterUpdate = issueRepository.getIssueById(issueId);
         issueRepository.updateIssue(issueBeforeUpdate);
         assertEquals(issueBeforeUpdate, issueRepository.getIssueById(issueId));
-        assertNotEquals(issueBeforeUpdate, issueAfterUpdate);
+        assertThat(issueBeforeUpdate, not(issueAfterUpdate));
         assertEquals("New description", issueAfterUpdate.getDescription());
         assertEquals(1, issueAfterUpdate.getId());
         assertEquals(2, issueAfterUpdate.getWorkItemId());
