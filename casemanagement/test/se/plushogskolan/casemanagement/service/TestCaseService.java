@@ -313,6 +313,7 @@ public class TestCaseService {
         when(workItemRepository.getWorkItemsByTeamId(team.getId())).thenReturn(workItemsStartedByUser);
         List<WorkItem> workItemsByTeamId = workItemRepository.getWorkItemsByTeamId(team.getId());
         assertEquals(workItemsStartedByUser, workItemsByTeamId);
+        caseService.getWorkItemsByTeamId(team.getId());
     }
 
     @Test
@@ -320,6 +321,7 @@ public class TestCaseService {
         when(workItemRepository.getWorkItemsByUserId(user.getId())).thenReturn(workItemsStartedByUser);
         List<WorkItem> workItemsByUserId = workItemRepository.getWorkItemsByUserId(user.getId());
         assertEquals(workItemsStartedByUser, workItemsByUserId);
+        caseService.getWorkItemsByUserId(user.getId());
     }
 
     @Test
@@ -327,6 +329,7 @@ public class TestCaseService {
         when(workItemRepository.getWorkItemsWithIssue()).thenReturn(workItemsStartedByUser);
         List<WorkItem> workItemsWithIssue = workItemRepository.getWorkItemsWithIssue();
         assertEquals(workItemsStartedByUser, workItemsWithIssue);
+        caseService.getWorkItemsWithIssue();
     }
 
     @Test
