@@ -29,7 +29,8 @@ import se.plushogskolan.casemanagement.repository.WorkItemRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public final class TestCaseServiceExceptionHandling {
-	User user;
+	private User user;
+	private Team team;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -46,6 +47,7 @@ public final class TestCaseServiceExceptionHandling {
     @Before
     public void setup(){
     	user = User.builder().setId(1001).build("Cool username");
+    	team = Team.builder().setId(100).build("Team name");
     }
     
     @Test
@@ -116,11 +118,67 @@ public final class TestCaseServiceExceptionHandling {
     }
     
     @Test
-    public void updateUserameShouldThrowServiceException() throws RepositoryException{
+    public void updateUsernameWith9CharsUsernameShouldThrowServiceException() throws RepositoryException{
     	String toShortUsername = ">10chars";
         expectedException.expect(ServiceException.class);
         expectedException.expectMessage("Username not long enough. Username was " + toShortUsername);
         caseService.updateUserUsername(user.getId(), toShortUsername);
+    }
+    
+    @Test
+    public void getUsersByTeamIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not get User by TeamId, teamId=" + team.getId());
+        doThrow(RepositoryException.class).when(userRepository).getUsersByTeamId(team.getId());
+        caseService.getUsersByTeamId(team.getId());
+    }
+    
+    @Test
+    public void saveTeamShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not save Team: " + team.toString());
+        doThrow(RepositoryException.class).when(teamRepository).saveTeam(team);
+        caseService.saveTeam(team);
+    }
+    
+    @Test
+    public void updateTeamShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not update Team with id " + team.getId());
+        doThrow(RepositoryException.class).when(teamRepository).updateTeam(team);
+        caseService.updateTeam(team);
+    }
+    
+    @Test
+    public void inactivateTeamShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not inactivate Team with id " + team.getId());
+        doThrow(RepositoryException.class).when(teamRepository).inactivateTeam(team.getId());
+        caseService.inactivateTeam(team.getId());
+    }
+    
+    @Test
+    public void activateTeamShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not activate Team with id " + team.getId());
+        doThrow(RepositoryException.class).when(teamRepository).activateTeam(team.getId());
+        caseService.activateTeam(team.getId());
+    }
+    
+    @Test
+    public void getAllTeamsShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not get all Teams");
+        doThrow(RepositoryException.class).when(teamRepository).getAllTeams();
+        caseService.getAllTeams();
+    }
+    
+    @Test
+    public void addUserToTeamShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("No space in team for user. userId = " + user.getId() + ", teamId = " + team.getId());
+        doThrow(RepositoryException.class).when(userRepository).getUsersByTeamId(team.getId());
+        caseService.addUserToTeam(user.getId(), team.getId());
     }
 
     @Test

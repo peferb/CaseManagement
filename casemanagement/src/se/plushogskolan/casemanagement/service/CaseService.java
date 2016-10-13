@@ -179,7 +179,7 @@ public final class CaseService {
         try {
             teamRepository.inactivateTeam(teamId);
         } catch (RepositoryException e) {
-            throw new ServiceException("Could not inactivate Team with id \"" + teamId, e);
+            throw new ServiceException("Could not inactivate Team with id " + teamId, e);
         }
     }
 
@@ -187,7 +187,7 @@ public final class CaseService {
         try {
             teamRepository.activateTeam(teamId);
         } catch (RepositoryException e) {
-            throw new ServiceException("Could not activate Team with id \"" + teamId, e);
+            throw new ServiceException("Could not activate Team with id " + teamId, e);
         }
     }
 
