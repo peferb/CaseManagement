@@ -4,6 +4,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
 
 import java.sql.SQLDataException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +19,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.exception.ServiceException;
+import se.plushogskolan.casemanagement.model.Team;
 import se.plushogskolan.casemanagement.model.User;
+import se.plushogskolan.casemanagement.model.WorkItem;
 import se.plushogskolan.casemanagement.repository.IssueRepository;
 import se.plushogskolan.casemanagement.repository.TeamRepository;
 import se.plushogskolan.casemanagement.repository.UserRepository;
@@ -79,6 +83,39 @@ public final class TestCaseServiceExceptionHandling {
     }
     
     @Test
+    public void inactivateUserByIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        doThrow(RepositoryException.class).when(userRepository).inactivateUserById(user.getId());;
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not inactivate User with id " + user.getId());
+        caseService.inactivateUserById(user.getId());
+    }
+    
+    @Test
+    public void activateUserByIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        doThrow(RepositoryException.class).when(userRepository).activateUserById(user.getId());;
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not activate User with id " + user.getId());
+        caseService.activateUserById(user.getId());
+    }
+    
+    @Test
+    public void getUserByIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        doThrow(RepositoryException.class).when(userRepository).getUserById(user.getId());;
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not get User by id " + user.getId());
+        caseService.getUserById(user.getId());
+    }
+    
+    @Test
+    public void searchUsersByShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        doThrow(RepositoryException.class).when(userRepository).searchUsersBy(user.getFirstName(), user.getLastName(), user.getUsername());
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not get User by first name, last name, username. " 
+        		+ user.getFirstName() + ", " + user.getLastName() + ", " + user.getUsername());
+        caseService.searchUsersBy(user.getFirstName(), user.getLastName(), user.getUsername());
+    }
+    
+    @Test
     public void updateUserameShouldThrowServiceException() throws RepositoryException{
     	String toShortUsername = ">10chars";
         expectedException.expect(ServiceException.class);
@@ -87,8 +124,30 @@ public final class TestCaseServiceExceptionHandling {
     }
 
     @Test
-    public void addingEleventhUserToTeamShouldThrowException(){
-    	// TODO implement test
-        //caseService.addUserToTeam(user.getId(), extraTeam.getId());
+    public void addingEleventhUserToTeamShouldThrowException() throws RepositoryException{
+    	int teamId = 100;
+    	List<User> tenUsersInTeam = new ArrayList();
+    	for (int i = 0; i < 10; i++) tenUsersInTeam.add(User.builder().setId(i).setTeamId(teamId).build("Bulk user"));
+    	when(userRepository.getUsersByTeamId(teamId)).thenReturn(tenUsersInTeam);
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("No space in team for user. userId = " + user.getId() + ", teamId = " + teamId);
+    	caseService.addUserToTeam(user.getId(), teamId);
+    }
+
+    @Test
+    public void addingSixthWorkItemToUserShouldThrowException() throws RepositoryException {
+        List<WorkItem> fiveWorkItems = new ArrayList<>();
+        for (int i = 0; i < 5; i++){
+            fiveWorkItems.add(WorkItem.builder().setId(i).setUserId(user.getId()).setDescription("Bulk WorkItem").build());
+        }
+        when(workItemRepository.getWorkItemsByUserId(user.getId())).thenReturn(fiveWorkItems);
+        when(userRepository.getUserById(user.getId())).thenReturn(user);
+
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage("Could not add work item to user, either user is inactive or there is no space " +
+                "for additional work items");
+        
+        int workItemId = 6;
+        caseService.addWorkItemToUser(workItemId, user.getId());
     }
 }

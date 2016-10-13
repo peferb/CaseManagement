@@ -146,7 +146,8 @@ public final class CaseService {
         try {
             return userRepository.searchUsersBy(firstName, lastName, username);
         } catch (RepositoryException e) {
-            throw new ServiceException("Could not get User by first name, last name, username.", e);
+            throw new ServiceException("Could not get User by first name, last name, username. " 
+            		+ firstName + ", " + lastName + ", " + username, e);
         }
     }
 
@@ -203,7 +204,7 @@ public final class CaseService {
             if (teamHasSpaceForUser(teamId, userId)) {
                 teamRepository.addUserToTeam(userId, teamId);
             } else {
-                throw new ServiceException("No space in team for user. userId = " + userId + "teamId = " + teamId);
+                throw new ServiceException("No space in team for user. userId = " + userId + ", teamId = " + teamId);
             }
         } catch (RepositoryException e) {
             throw new ServiceException(

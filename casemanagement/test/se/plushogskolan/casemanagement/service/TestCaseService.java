@@ -92,7 +92,6 @@ public class TestCaseService {
     }
 
     private void setupWorkItems() {
-        // WorkItems should be built with status Unstarted by default
         unstartedWorkItem = WorkItem.builder().setId(1).setDescription("Test the CaseService").build();
         unstartedWorkItems = new ArrayList<>();
         unstartedWorkItems.add(unstartedWorkItem);
@@ -144,7 +143,7 @@ public class TestCaseService {
     }
 
     @Test
-    public void canInactivateUser() throws RepositoryException {
+    public void inactivateUserShouldSetUsersWorkItemsToUnstarted() throws RepositoryException {
         List<WorkItem> workItems = new ArrayList<>();
         workItems.add(unstartedWorkItem);
 
@@ -339,22 +338,6 @@ public class TestCaseService {
 
         verify(issueRepository).updateIssue(issueToWorkItemDoneByExtraUser);
         verify(workItemRepository).updateStatusById(workItemDoneByExtraUser.getId(), WorkItem.Status.UNSTARTED);
-    }
-
-    @Test
-    public void addingSixthWorkItemToUserShouldThrowException() throws RepositoryException {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Could not add work item to user, either user is inactive or there is no space " +
-                "for additional work items");
-
-        List<WorkItem> fiveWorkItems = new ArrayList<>();
-        for (int i = 0; i < 5; i++){
-            fiveWorkItems.add(workItemStartedByUser);
-        }
-        when(workItemRepository.getWorkItemsByUserId(user.getId())).thenReturn(fiveWorkItems);
-        when(userRepository.getUserById(user.getId())).thenReturn(user);
-
-        caseService.addWorkItemToUser(workItemDoneByExtraUser.getId(), user.getId());
     }
 
     @Test
