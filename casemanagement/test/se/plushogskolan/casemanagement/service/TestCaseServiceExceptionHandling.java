@@ -15,10 +15,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.stubbing.answers.DoesNothing;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import se.plushogskolan.casemanagement.exception.RepositoryException;
 import se.plushogskolan.casemanagement.exception.ServiceException;
+import se.plushogskolan.casemanagement.model.Issue;
 import se.plushogskolan.casemanagement.model.Team;
 import se.plushogskolan.casemanagement.model.User;
 import se.plushogskolan.casemanagement.model.WorkItem;
@@ -31,6 +33,9 @@ import se.plushogskolan.casemanagement.repository.WorkItemRepository;
 public final class TestCaseServiceExceptionHandling {
 	private User user;
 	private Team team;
+	private WorkItem workItem;
+	private Issue issue;
+
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -48,6 +53,8 @@ public final class TestCaseServiceExceptionHandling {
     public void setup(){
     	user = User.builder().setId(1001).build("Cool username");
     	team = Team.builder().setId(100).build("Team name");
+    	workItem = WorkItem.builder().build();
+    	issue = Issue.builder(workItem.getId()).build();
     }
     
     @Test
@@ -176,9 +183,75 @@ public final class TestCaseServiceExceptionHandling {
     @Test
     public void addUserToTeamShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
         expectedException.expect(ServiceException.class);
-        expectedException.expectMessage("No space in team for user. userId = " + user.getId() + ", teamId = " + team.getId());
+        expectedException.expectMessage("Could not add User with id " + user.getId() + " to Team with id " + team.getId());
         doThrow(RepositoryException.class).when(userRepository).getUsersByTeamId(team.getId());
         caseService.addUserToTeam(user.getId(), team.getId());
+    }
+    
+    @Test
+    public void deleteWorkItemShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not delete WorkItem with id " + workItem.getId());
+        doThrow(RepositoryException.class).when(workItemRepository).deleteWorkItemById(workItem.getId());
+        caseService.deleteWorkItem(workItem.getId());
+    }
+    
+    @Test
+    public void saveWorkItemShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not save workItem " + workItem.toString());
+        doThrow(RepositoryException.class).when(workItemRepository).saveWorkItem(workItem);
+        caseService.saveWorkItem(workItem);
+    }
+    
+    @Test
+    public void getWorkItemsByStatusShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not WorkItems with status " + WorkItem.Status.DONE);
+        doThrow(RepositoryException.class).when(workItemRepository).getWorkItemsByStatus(WorkItem.Status.DONE);
+        caseService.getWorkItemsByStatus(WorkItem.Status.DONE);
+    }
+    
+    @Test
+    public void getWorkItemsByTeamIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not get WorkItem connected to Team id " + team.getId());
+        doThrow(RepositoryException.class).when(workItemRepository).getWorkItemsByTeamId(team.getId());
+        caseService.getWorkItemsByTeamId(team.getId());
+    }
+    
+    @Test
+    public void getWorkItemsByUserIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not WorkItem connected to User id " + user.getId());
+        doThrow(RepositoryException.class).when(workItemRepository).getWorkItemsByUserId(user.getId());
+        caseService.getWorkItemsByUserId(user.getId());
+    }
+    
+    @Test
+    public void getWorkItemsWithIssueShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not WorkItems with Issues");
+        doThrow(RepositoryException.class).when(workItemRepository).getWorkItemsWithIssue();
+        caseService.getWorkItemsWithIssue();
+    }
+    
+    @Test
+    public void saveIssueShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not save Issue " + issue);
+        doThrow(RepositoryException.class).when(workItemRepository).getWorkItemById(workItem.getId());
+        caseService.saveIssue(issue);
+    }
+    
+    @Test
+    public void updateWorkItemStatusByIdShouldCatchRepositoryExceptionAndThrowServiceException() throws RepositoryException{
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not update status to " + WorkItem.Status.DONE
+        		+ "on WorkItem with id " + workItem.getId());
+        doThrow(RepositoryException.class).when(workItemRepository)
+        	.updateWorkItemStatusById(workItem.getId(), WorkItem.Status.DONE);
+        caseService.updateWorkItemStatusById(workItem.getId(), WorkItem.Status.DONE);
     }
 
     @Test

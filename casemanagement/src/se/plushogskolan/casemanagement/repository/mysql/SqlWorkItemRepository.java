@@ -29,7 +29,7 @@ public final class SqlWorkItemRepository implements WorkItemRepository {
     }
 
     @Override
-    public void updateStatusById(int workItemId, Status workItemStatus) throws RepositoryException {
+    public void updateWorkItemStatusById(int workItemId, Status workItemStatus) throws RepositoryException {
         int sqlIndex = workItemStatus.ordinal() + 1;
         try {
             new SqlHelper(url).query("UPDATE work_item_table SET idstatus = ? WHERE idwork_item_table = ?;")

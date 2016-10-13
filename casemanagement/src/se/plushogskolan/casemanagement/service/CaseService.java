@@ -208,7 +208,7 @@ public final class CaseService {
             }
         } catch (RepositoryException e) {
             throw new ServiceException(
-                    "Could not add User with id \"" + userId + "\" to Team with id \"" + teamId + "\".", e);
+                    "Could not add User with id " + userId + " to Team with id " + teamId, e);
         }
     }
 
@@ -216,32 +216,29 @@ public final class CaseService {
         try {
             workItemRepository.saveWorkItem(workItem);
         } catch (RepositoryException e) {
-            throw new ServiceException("Could not save workItem: " + workItem.toString(), e);
+            throw new ServiceException("Could not save workItem " + workItem.toString(), e);
         }
     }
 
-    public void updateStatusById(int workItemId, WorkItem.Status workItemStatus) {
+    public void updateWorkItemStatusById(int workItemId, WorkItem.Status workItemStatus) {
         try {
-            workItemRepository.updateStatusById(workItemId, workItemStatus);
+            workItemRepository.updateWorkItemStatusById(workItemId, workItemStatus);
         } catch (RepositoryException e) {
-            throw new ServiceException("Could not update status to: \"" + workItemStatus.toString()
-                    + "\" on WorkItem with id: " + workItemId, e);
+            throw new ServiceException("Could not update status to " + workItemStatus.toString()
+                    + "on WorkItem with id " + workItemId, e);
         }
     }
 
     public void deleteWorkItem(int workItemId) {
-
         try {
             workItemRepository.deleteWorkItemById(workItemId);
-
             cleanRelatedDataOnWorkItemDelete(workItemId);
         } catch (RepositoryException e) {
-            throw new ServiceException("Could not delete WorkItem with id: " + workItemId, e);
+            throw new ServiceException("Could not delete WorkItem with id " + workItemId, e);
         }
     }
 
     public void addWorkItemToUser(int workItemId, int userId) {
-
         try {
             if (userIsActive(userId) && userHasSpaceForAdditionalWorkItem(workItemId, userId)) {
                 workItemRepository.addWorkItemToUser(workItemId, userId);
@@ -291,13 +288,18 @@ public final class CaseService {
         try {
             if (workItemIsDone(issue.getWorkItemId())) {
                 issueRepository.saveIssue(issue);
-                workItemRepository.updateStatusById(issue.getWorkItemId(), WorkItem.Status.UNSTARTED);
+                workItemRepository.updateWorkItemStatusById(issue.getWorkItemId(), WorkItem.Status.UNSTARTED);
             } else {
                 throw new ServiceException("WorkItem does not have status done");
             }
         } catch (RepositoryException e) {
             throw new ServiceException("Could not save Issue " + issue, e);
         }
+    }
+
+    private boolean workItemIsDone(int workItemId) throws RepositoryException {
+        WorkItem workItem = workItemRepository.getWorkItemById(workItemId);
+        return WorkItem.Status.DONE.equals(workItem.getStatus());
     }
 
     public void updateIssueDescription(int issueId, String description) {
@@ -319,7 +321,7 @@ public final class CaseService {
                 Issue updatedIssue = Issue.builder(workItemId).setId(issueId)
                         .setDescription(issueToUpdate.getDescription()).build();
                 issueRepository.updateIssue(updatedIssue);
-                workItemRepository.updateStatusById(workItemId, WorkItem.Status.UNSTARTED);
+                workItemRepository.updateWorkItemStatusById(workItemId, WorkItem.Status.UNSTARTED);
             } else {
                 throw new ServiceException("WorkItem does not have status done");
             }
@@ -334,7 +336,7 @@ public final class CaseService {
 
         List<WorkItem> workItems = workItemRepository.getWorkItemsByUserId(userId);
         for (WorkItem workItem : workItems) {
-            workItemRepository.updateStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
+            workItemRepository.updateWorkItemStatusById(workItem.getId(), WorkItem.Status.UNSTARTED);
         }
     }
 
@@ -357,11 +359,6 @@ public final class CaseService {
             }
         }
         return workItems.size() < 5;
-    }
-
-    private boolean workItemIsDone(int workItemId) throws RepositoryException {
-        WorkItem workItem = workItemRepository.getWorkItemById(workItemId);
-        return WorkItem.Status.DONE.equals(workItem.getStatus());
     }
 
     private void cleanRelatedDataOnWorkItemDelete(int workItemId) throws RepositoryException {

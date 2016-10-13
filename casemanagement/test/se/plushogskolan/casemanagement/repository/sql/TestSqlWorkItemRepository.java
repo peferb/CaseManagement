@@ -86,10 +86,10 @@ public class TestSqlWorkItemRepository {
         WorkItem.Status workItemWithId3Status = WorkItem.Status.STARTED;
         WorkItem.Status workItemWithId4Status = WorkItem.Status.DONE;
         try {
-            repository.updateStatusById(1, workItemWithId1Status);
-            repository.updateStatusById(2, workItemWithId2Status);
-            repository.updateStatusById(3, workItemWithId3Status);
-            repository.updateStatusById(4, workItemWithId4Status);
+            repository.updateWorkItemStatusById(1, workItemWithId1Status);
+            repository.updateWorkItemStatusById(2, workItemWithId2Status);
+            repository.updateWorkItemStatusById(3, workItemWithId3Status);
+            repository.updateWorkItemStatusById(4, workItemWithId4Status);
         } catch (RepositoryException e) {
             e.printStackTrace();
         }

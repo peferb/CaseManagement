@@ -152,7 +152,7 @@ public class TestCaseService {
         caseService.inactivateUserById(user.getId());
 
         verify(userRepository).inactivateUserById(user.getId());
-        verify(workItemRepository).updateStatusById(unstartedWorkItem.getId(), WorkItem.Status.UNSTARTED);
+        verify(workItemRepository).updateWorkItemStatusById(unstartedWorkItem.getId(), WorkItem.Status.UNSTARTED);
     }
 
     @Test
@@ -241,9 +241,9 @@ public class TestCaseService {
     @Test
     public void canUpdateWorkItemStatus() throws RepositoryException {
         WorkItem.Status status = WorkItem.Status.STARTED;
-        caseService.updateStatusById(unstartedWorkItem.getId(), status);
+        caseService.updateWorkItemStatusById(unstartedWorkItem.getId(), status);
 
-        verify(workItemRepository).updateStatusById(unstartedWorkItem.getId(), status);
+        verify(workItemRepository).updateWorkItemStatusById(unstartedWorkItem.getId(), status);
     }
 
     @Test
@@ -340,7 +340,7 @@ public class TestCaseService {
         caseService.assignIssueToWorkItem(issueToWorkItemDoneByExtraUser.getId(), workItemDoneByExtraUser.getId());
 
         verify(issueRepository).updateIssue(issueToWorkItemDoneByExtraUser);
-        verify(workItemRepository).updateStatusById(workItemDoneByExtraUser.getId(), WorkItem.Status.UNSTARTED);
+        verify(workItemRepository).updateWorkItemStatusById(workItemDoneByExtraUser.getId(), WorkItem.Status.UNSTARTED);
     }
 
     @Test

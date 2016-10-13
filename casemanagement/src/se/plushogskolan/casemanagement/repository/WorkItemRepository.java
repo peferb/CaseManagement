@@ -9,7 +9,7 @@ public interface WorkItemRepository {
 
     void saveWorkItem(WorkItem workItem) throws RepositoryException;
     
-    void updateStatusById(int workItemId, WorkItem.Status workItemStatus) throws RepositoryException;
+    void updateWorkItemStatusById(int workItemId, WorkItem.Status workItemStatus) throws RepositoryException;
     
     void deleteWorkItemById(int workItemId) throws RepositoryException;
     
