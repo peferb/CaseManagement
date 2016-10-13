@@ -133,8 +133,8 @@ public class TestCaseService {
     @Test
     public void usernameMustBeTenCharactersLong() throws RepositoryException {
         String usernameWithNineChars = "Is<10char";
-        User userWithToShortName = User.builder().setFirstName(user.getFirstName()).setLastName(user.getLastName()).setId(user.getId())
-                .build(usernameWithNineChars);
+        User userWithToShortName = User.builder().setFirstName(user.getFirstName()).setLastName(user.getLastName())
+        		.setId(user.getId()).build(usernameWithNineChars);
 
         expectedException.expect(ServiceException.class);
         expectedException.expectMessage("Username too short or team is full. User: " + userWithToShortName.toString());
@@ -146,29 +146,23 @@ public class TestCaseService {
     public void inactivateUserShouldSetUsersWorkItemsToUnstarted() throws RepositoryException {
         List<WorkItem> workItems = new ArrayList<>();
         workItems.add(unstartedWorkItem);
-
         when(workItemRepository.getWorkItemsByUserId(user.getId())).thenReturn(workItems);
 
         caseService.inactivateUserById(user.getId());
-
         verify(userRepository).inactivateUserById(user.getId());
         verify(workItemRepository).updateWorkItemStatusById(unstartedWorkItem.getId(), WorkItem.Status.UNSTARTED);
     }
 
     @Test
     public void canActivateUser() throws RepositoryException {
-
         caseService.activateUserById(user.getId());
-
         verify(userRepository).activateUserById(user.getId());
     }
 
     @Test
     public void canGetUserById() throws RepositoryException {
         when(userRepository.getUserById(user.getId())).thenReturn(user);
-
         User result = caseService.getUserById(user.getId());
-
         assertEquals(user, result);
     }
 
@@ -176,65 +170,52 @@ public class TestCaseService {
     public void canGetUsersByTeamId() throws RepositoryException {
         int teamId = 1;
         when(userRepository.getUsersByTeamId(1)).thenReturn(users);
-
         List<User> result = caseService.getUsersByTeamId(teamId);
-
         assertEquals(users, result);
     }
 
     @Test
     public void canSaveTeam() throws RepositoryException {
         caseService.saveTeam(team);
-
         verify(teamRepository).saveTeam(team);
     }
 
     @Test
     public void canUpdateTeam() throws RepositoryException {
         caseService.updateTeam(team);
-
         verify(teamRepository).updateTeam(team);
     }
 
     @Test
     public void canActivateTeam() throws RepositoryException {
         caseService.activateTeam(team.getId());
-
         verify(teamRepository).activateTeam(team.getId());
     }
 
     @Test
     public void canInactivateTeam() throws RepositoryException {
         caseService.inactivateTeam(team.getId());
-
         verify(teamRepository).inactivateTeam(team.getId());
     }
 
     @Test
     public void canGetAllTeams() throws RepositoryException {
         when(teamRepository.getAllTeams()).thenReturn(teams);
-
         List<Team> teamsGotten = caseService.getAllTeams();
-
         assertEquals(teams, teamsGotten);
     }
 
     @Test
     public void canAddUserToTeam() throws RepositoryException {
-
         doNothing().when(teamRepository).addUserToTeam(user.getId(), team.getId());
-
         when(userRepository.getUserById(user.getId())).thenReturn(user);
-
         caseService.addUserToTeam(user.getId(), team.getId());
-
         verify(teamRepository, times(1)).addUserToTeam(user.getId(), team.getId());
     }
 
     @Test
     public void canSaveWorkItem() throws RepositoryException {
         caseService.saveWorkItem(unstartedWorkItem);
-
         verify(workItemRepository).saveWorkItem(unstartedWorkItem);
     }
 
@@ -242,39 +223,31 @@ public class TestCaseService {
     public void canUpdateWorkItemStatus() throws RepositoryException {
         WorkItem.Status status = WorkItem.Status.STARTED;
         caseService.updateWorkItemStatusById(unstartedWorkItem.getId(), status);
-
         verify(workItemRepository).updateWorkItemStatusById(unstartedWorkItem.getId(), status);
     }
 
     @Test
     public void canDeleteWorkItem() throws RepositoryException {
         when(issueRepository.getIssuesByWorkItemId(unstartedWorkItem.getId())).thenReturn(issuesToWorkItem);
-
         caseService.deleteWorkItem(unstartedWorkItem.getId());
-
         verify(workItemRepository, times(1)).deleteWorkItemById(unstartedWorkItem.getId());
-
         verify(issueRepository).getIssuesByWorkItemId(unstartedWorkItem.getId());
-
         verify(issueRepository, times(1)).deleteIssue(issueToWorkItemStartedByUser.getId());
 
     }
 
     @Test
     public void canSaveIssue() throws RepositoryException {
-        when(workItemRepository.getWorkItemById(issueToWorkItemStartedByUser.getWorkItemId())).thenReturn(workItemDoneByExtraUser);
-
+        when(workItemRepository.getWorkItemById(issueToWorkItemStartedByUser.getWorkItemId()))
+        	.thenReturn(workItemDoneByExtraUser);
         caseService.saveIssue(issueToWorkItemStartedByUser);
     }
 
     @Test
     public void canAddWorkItemToUser() throws RepositoryException {
         when(workItemRepository.getWorkItemsByUserId(user.getId())).thenReturn(workItemsStartedByUser);
-
         when(userRepository.getUserById(user.getId())).thenReturn(user);
-
         caseService.addWorkItemToUser(unstartedWorkItem.getId(), user.getId());
-
         verify(workItemRepository).addWorkItemToUser(unstartedWorkItem.getId(), user.getId());
     }
 
@@ -301,7 +274,8 @@ public class TestCaseService {
     public void canUpdateIssueDescription() throws RepositoryException {
         int issueId = 1001;
         Issue issueWithOldDescription = Issue.builder(1).setId(issueId).setDescription("It's like this, do that!").build();
-        Issue issueWithNewDescription = Issue.builder(1).setId(issueId).setDescription("No, it's more like that actually. Do this instead.").build();
+        Issue issueWithNewDescription = Issue.builder(1).setId(issueId)
+        		.setDescription("No, it's more like that actually. Do this instead.").build();
         when(issueRepository.getIssueById(issueId)).thenReturn(issueWithOldDescription);
 
         caseService.updateIssueDescription(issueId, issueWithNewDescription.getDescription());
@@ -311,25 +285,22 @@ public class TestCaseService {
     @Test
     public void canGetWorkItemsByTeamId() throws RepositoryException {
         when(workItemRepository.getWorkItemsByTeamId(team.getId())).thenReturn(workItemsStartedByUser);
-        List<WorkItem> workItemsByTeamId = workItemRepository.getWorkItemsByTeamId(team.getId());
+        List<WorkItem> workItemsByTeamId = caseService.getWorkItemsByTeamId(team.getId());
         assertEquals(workItemsStartedByUser, workItemsByTeamId);
-        caseService.getWorkItemsByTeamId(team.getId());
     }
 
     @Test
     public void canGetWorkItemsByUserId() throws RepositoryException {
         when(workItemRepository.getWorkItemsByUserId(user.getId())).thenReturn(workItemsStartedByUser);
-        List<WorkItem> workItemsByUserId = workItemRepository.getWorkItemsByUserId(user.getId());
+        List<WorkItem> workItemsByUserId = caseService.getWorkItemsByUserId(user.getId());
         assertEquals(workItemsStartedByUser, workItemsByUserId);
-        caseService.getWorkItemsByUserId(user.getId());
     }
 
     @Test
     public void canGetWorkItemsWithIssue() throws RepositoryException {
         when(workItemRepository.getWorkItemsWithIssue()).thenReturn(workItemsStartedByUser);
-        List<WorkItem> workItemsWithIssue = workItemRepository.getWorkItemsWithIssue();
+        List<WorkItem> workItemsWithIssue = caseService.getWorkItemsWithIssue();
         assertEquals(workItemsStartedByUser, workItemsWithIssue);
-        caseService.getWorkItemsWithIssue();
     }
 
     @Test
@@ -349,9 +320,7 @@ public class TestCaseService {
         User userWithNewFirstName = User.builder().setFirstName(newName).setLastName(user.getLastName())
                 .setActive(user.isActive()).setId(user.getId()).build(user.getUsername());
         when(userRepository.getUserById(user.getId())).thenReturn(user);
-
         caseService.updateUserFirstName(user.getId(), newName);
-
         verify(userRepository).updateUser(userWithNewFirstName);
     }
 
@@ -361,9 +330,7 @@ public class TestCaseService {
         User userWithNewLastName = User.builder().setFirstName(user.getFirstName()).setLastName(newName)
                 .setActive(user.isActive()).setId(user.getId()).build(user.getUsername());
         when(userRepository.getUserById(user.getId())).thenReturn(user);
-
         caseService.updateUserLastName(user.getId(), newName);
-
         verify(userRepository).updateUser(userWithNewLastName);
     }
 
@@ -373,9 +340,7 @@ public class TestCaseService {
         User userWithNewUsername = User.builder().setFirstName(user.getFirstName()).setLastName(user.getLastName())
                 .setActive(user.isActive()).setId(user.getId()).build(newName);
         when(userRepository.getUserById(user.getId())).thenReturn(user);
-
         caseService.updateUserUsername(user.getId(), newName);
-
         verify(userRepository).updateUser(userWithNewUsername);
     }
 
