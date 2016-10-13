@@ -41,6 +41,34 @@ public final class CaseService {
         }
     }
 
+    private boolean userFillsRequirements(User user) throws RepositoryException {
+        if (!usernameLongEnough(user.getUsername())) {
+            return false;
+        }
+        if (!teamHasSpaceForUser(user.getTeamId(), user.getId())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean usernameLongEnough(String username) {
+
+        return username.length() >= 10;
+    }
+
+    private boolean teamHasSpaceForUser(int teamId, int userId) throws RepositoryException {
+
+        if (teamId == 0) {
+            return true;
+        }
+        return numberOfUsersInTeamLessThanTen(teamId);
+    }
+
+    private boolean numberOfUsersInTeamLessThanTen(int teamId) throws RepositoryException {
+        List<User> users = userRepository.getUsersByTeamId(teamId);
+        return users.size() < 10;
+    }
+
     public void updateUserFirstName(int userId, String firstName) {
 
         try {
@@ -73,21 +101,18 @@ public final class CaseService {
     }
 
     public void updateUserUsername(int userId, String username) {
-
-        try {
-            User userToUpdate = userRepository.getUserById(userId);
-            User updatedUser = User.builder().setFirstName(userToUpdate.getFirstName())
-                    .setLastName(userToUpdate.getLastName()).setTeamId(userToUpdate.getTeamId())
-                    .setActive(userToUpdate.isActive()).setId(userToUpdate.getId()).build(username);
-
-            if (usernameLongEnough(username)) {
-                userRepository.updateUser(updatedUser);
-            } else {
-                throw new ServiceException("Username not long enough. Username was " + username);
-            }
-
-        } catch (RepositoryException e) {
-            throw new ServiceException("Could not update user with id: " + userId + ", new username: " + username, e);
+    	if (!usernameLongEnough(username)) {
+            throw new ServiceException("Username not long enough. Username was " + username);
+        } else {
+	        try {
+	            User userToUpdate = userRepository.getUserById(userId);
+	            User updatedUser = User.builder().setFirstName(userToUpdate.getFirstName())
+	                    .setLastName(userToUpdate.getLastName()).setTeamId(userToUpdate.getTeamId())
+	                    .setActive(userToUpdate.isActive()).setId(userToUpdate.getId()).build(username);
+	            userRepository.updateUser(updatedUser);
+	        } catch (RepositoryException e) {
+	            throw new ServiceException("Could not update user with id: " + userId + ", new username: " + username, e);
+	        }
         }
     }
 
@@ -302,34 +327,6 @@ public final class CaseService {
                     "Could not assign new work item to Issue with id " + issueId + " and work item id " + workItemId,
                     e);
         }
-    }
-
-    private boolean userFillsRequirements(User user) throws RepositoryException {
-        if (!usernameLongEnough(user.getUsername())) {
-            return false;
-        }
-        if (!teamHasSpaceForUser(user.getTeamId(), user.getId())) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean usernameLongEnough(String username) {
-
-        return username.length() >= 10;
-    }
-
-    private boolean teamHasSpaceForUser(int teamId, int userId) throws RepositoryException {
-
-        if (teamId == 0) {
-            return true;
-        }
-        return numberOfUsersInTeamLessThanTen(teamId);
-    }
-
-    private boolean numberOfUsersInTeamLessThanTen(int teamId) throws RepositoryException {
-        List<User> users = userRepository.getUsersByTeamId(teamId);
-        return users.size() < 10;
     }
 
     private void setStatusOfAllWorkItemsOfUserToUnstarted(int userId) throws RepositoryException {

@@ -6,4 +6,8 @@ public class RepositoryException extends Exception {
     public RepositoryException(String message, Exception exception) {
         super(message, exception);
     }
+
+    public RepositoryException(String message) {
+        super(message);
+    }
 }
