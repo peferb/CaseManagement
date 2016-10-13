@@ -395,20 +395,13 @@ public class TestCaseService {
 
     @Test
     public void canSearchUsersManyWays() throws RepositoryException {
-        userRepository.searchUsersBy(user.getFirstName(), user.getLastName(), user.getUsername());
+    	caseService.searchUsersBy(user.getFirstName(), user.getLastName(), user.getUsername());
         verify(userRepository).searchUsersBy(user.getFirstName(), user.getLastName(), user.getUsername());
 
-        userRepository.searchUsersBy(user.getFirstName(), user.getLastName(), "");
+        caseService.searchUsersBy(user.getFirstName(), user.getLastName(), "");
         verify(userRepository).searchUsersBy(user.getFirstName(), user.getLastName(), "");
 
-        userRepository.searchUsersBy(null, user.getLastName(), "");
+        caseService.searchUsersBy(null, user.getLastName(), "");
         verify(userRepository).searchUsersBy(null, user.getLastName(), "");
-    }
-
-    @Test
-    public void addingEleventhUserToTeamShouldThrowException(){
-
-
-        caseService.addUserToTeam(user.getId(), extraTeam.getId());
     }
 }

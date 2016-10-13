@@ -85,4 +85,10 @@ public final class TestCaseServiceExceptionHandling {
         expectedException.expectMessage("Username not long enough. Username was " + toShortUsername);
         caseService.updateUserUsername(user.getId(), toShortUsername);
     }
+
+    @Test
+    public void addingEleventhUserToTeamShouldThrowException(){
+    	// TODO implement test
+        //caseService.addUserToTeam(user.getId(), extraTeam.getId());
+    }
 }
