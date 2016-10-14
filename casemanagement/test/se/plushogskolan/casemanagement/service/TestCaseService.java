@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestCaseService {
+public final class TestCaseService {
     private User user;
     private User extraUser;
     private WorkItem unstartedWorkItem;
@@ -169,7 +169,7 @@ public class TestCaseService {
     @Test
     public void canGetUsersByTeamId() throws RepositoryException {
         int teamId = 1;
-        when(userRepository.getUsersByTeamId(1)).thenReturn(users);
+        when(userRepository.getUsersByTeamId(teamId)).thenReturn(users);
         List<User> result = caseService.getUsersByTeamId(teamId);
         assertEquals(users, result);
     }
@@ -355,4 +355,6 @@ public class TestCaseService {
         caseService.searchUsersBy(null, user.getLastName(), "");
         verify(userRepository).searchUsersBy(null, user.getLastName(), "");
     }
+    
+    
 }

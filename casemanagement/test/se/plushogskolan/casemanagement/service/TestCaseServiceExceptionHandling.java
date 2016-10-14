@@ -281,4 +281,15 @@ public final class TestCaseServiceExceptionHandling {
         int workItemId = 6;
         caseService.addWorkItemToUser(workItemId, user.getId());
     }
+    
+    @Test
+    public void shouldNotBeAbleAddWorkItemToInactiveUser() throws RepositoryException{
+    	int workItemId = 1;
+    	User inactiveUser = User.builder().setActive(false).build("Inactive user");
+        expectedException.expect(ServiceException.class);
+        expectedException.expectMessage("Could not add work item to user, either user is inactive or there is no "
+        		+ "space for additional work items");
+        when(userRepository.getUserById(inactiveUser.getId())).thenReturn(inactiveUser);
+        caseService.addWorkItemToUser(workItemId, inactiveUser.getId());
+    }
 }
