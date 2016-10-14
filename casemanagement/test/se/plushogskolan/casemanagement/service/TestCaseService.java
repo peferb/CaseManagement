@@ -207,7 +207,6 @@ public final class TestCaseService {
 
     @Test
     public void canAddUserToTeam() throws RepositoryException {
-        doNothing().when(teamRepository).addUserToTeam(user.getId(), team.getId());
         when(userRepository.getUserById(user.getId())).thenReturn(user);
         caseService.addUserToTeam(user.getId(), team.getId());
         verify(teamRepository, times(1)).addUserToTeam(user.getId(), team.getId());
@@ -355,6 +354,5 @@ public final class TestCaseService {
         caseService.searchUsersBy(null, user.getLastName(), "");
         verify(userRepository).searchUsersBy(null, user.getLastName(), "");
     }
-    
     
 }

@@ -45,7 +45,7 @@ public final class CaseService {
         if (!usernameLongEnough(user.getUsername())) {
             return false;
         }
-        if (!teamHasSpaceForUser(user.getTeamId(), user.getId())) {
+        if (!teamHasSpaceForUser(user.getTeamId())) {
             return false;
         }
         return true;
@@ -56,7 +56,7 @@ public final class CaseService {
         return username.length() >= 10;
     }
 
-    private boolean teamHasSpaceForUser(int teamId, int userId) throws RepositoryException {
+    private boolean teamHasSpaceForUser(int teamId) throws RepositoryException {
 
         if (teamId == 0) {
             return true;
@@ -201,7 +201,7 @@ public final class CaseService {
 
     public void addUserToTeam(int userId, int teamId) {
         try {
-            if (teamHasSpaceForUser(teamId, userId)) {
+            if (teamHasSpaceForUser(teamId)) {
                 teamRepository.addUserToTeam(userId, teamId);
             } else {
                 throw new ServiceException("No space in team for user. userId = " + userId + ", teamId = " + teamId);
